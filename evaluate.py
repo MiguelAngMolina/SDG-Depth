@@ -52,10 +52,10 @@ def validate(model, args, mixed_prec=False, completion_split='val'):
         if args.guided_flag and (args.test_datasets in ['kitti_completion', 'vkitti2', 'ms2']):
             _, image1, image2, flow_gt, valid_gt, hint, conversion_rate = val_dataset[val_id]
             conversion_rate = conversion_rate[None]
-            hint = hint[None].cuda()
+            hint = hint[None]
 
-        image1 = image1[None].cuda()
-        image2 = image2[None].cuda()
+        image1 = image1[None]
+        image2 = image2[None]
 
         if not image1.shape[-1] in [960]:
             pad_size = 64
@@ -70,7 +70,7 @@ def validate(model, args, mixed_prec=False, completion_split='val'):
             start = time.perf_counter()
             depth_pr, _, _, _, _, _ = model(image1, image2, sparse=hint,
                                             sparse_mask=sparse_mask,
-                                            conversion_rate=conversion_rate.cuda())
+                                            conversion_rate=conversion_rate)
             end = time.perf_counter()
 
             time_count += end - start
@@ -82,7 +82,7 @@ def validate(model, args, mixed_prec=False, completion_split='val'):
 
         depth_pr = depth_pr[-1].unsqueeze(1)
         c_rate = conversion_rate.unsqueeze(1).unsqueeze(1).unsqueeze(1).repeat(1, 1, depth_pr.shape[-2],
-                                                                               depth_pr.shape[-1]).cuda()
+                                                                               depth_pr.shape[-1])
         flow_pr = c_rate / (depth_pr + 1e-6)
         flow_pr = torch.where(depth_pr == 0, torch.zeros_like(depth_pr, device=depth_pr.device), flow_pr)
         flow_pr = torch.clamp(flow_pr, min=0, max=args.max_disp)

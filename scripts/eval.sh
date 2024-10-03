@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-CUDA_VISIBLE_DEVICES=0 python -u stereo_lidar.py \
+python -u stereo_lidar.py \
 --checkpoint_dir checkpoints \
 --first_test 1 \
---resume_ckpt premodel/model_kitti.pth \
+--resume_ckpt model_ms2.pth \
 --strict_resume 1 \
---train_datasets kitti_completion \
---test_datasets kitti_completion \
+--train_datasets ms2 \
+--test_datasets ms2 \
 --max_disp 192 \
 --image_size 256 512 \
 --occlusion_aug_prob 0.5 \

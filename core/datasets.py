@@ -354,13 +354,8 @@ class MS2(StereoDataset):
 
         assert os.path.exists(root)
 
-        train_seq_list = ['_2021-08-06-11-23-45',  # urban
-                          '_2021-08-13-16-14-48',  # Residential
-                          '_2021-08-13-16-31-10',  # road1
-                          '_2021-08-13-17-06-04',  # campus
-                          ]
-        test_seq_list = ['_2021-08-13-16-08-46',  # road3
-                         ]
+        train_seq_list = ['_2021-08-06-11-37-46']
+        test_seq_list = ['_2021-08-06-11-23-45']
 
         use_seqs = train_seq_list if image_set == 'training' else test_seq_list
 

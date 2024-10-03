@@ -717,7 +717,7 @@ class SDGDepth(nn.Module):
                 -torch.square(sparse - sampler) / (2 * pow(c, 2)))
         else:
             device = cost_volum.get_device()
-            sampler_gen = torch.arange(0, max_disp, 1, device=device).view(1, max_disp, 1, 1)
+            sampler_gen = torch.arange(0, max_disp, 1).view(1, max_disp, 1, 1)
             gaussian_modulation_element = 1 - sparse_mask + sparse_mask * k * torch.exp(
                 -torch.square(sparse - sampler_gen) / (2 * pow(c, 2)))
 
@@ -767,7 +767,7 @@ class SDGDepth(nn.Module):
                     -torch.square(sparse - sampler) / (2 * pow(c, 2))))
         else:
             device = cost_volum.get_device()
-            sampler_gen = torch.arange(0, max_disp, 1, device=device).view(1, max_disp, 1, 1)
+            sampler_gen = torch.arange(0, max_disp, 1).view(1, max_disp, 1, 1)
             if confidence is None:
                 gaussian_modulation_element = 1 - sparse_mask + sparse_mask * k * torch.exp(
                     -torch.square(sparse - sampler_gen) / (2 * pow(c, 2)))

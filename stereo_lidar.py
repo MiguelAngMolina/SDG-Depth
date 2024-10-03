@@ -242,7 +242,7 @@ class Logger:
 def main(args):
     Path(args.checkpoint_dir).mkdir(exist_ok=True, parents=True)
 
-    model = SDGDepth(args.max_disp, use_concat_volume=True, args=args).cuda()
+    model = SDGDepth(args.max_disp, use_concat_volume=True, args=args).to('cpu')
     model = torch.nn.DataParallel(model)
     model_without_ddp = model.module
 
@@ -256,8 +256,7 @@ def main(args):
     if args.resume_ckpt is not None and args.local_rank == 0:
         assert os.path.isfile(args.resume_ckpt)
         logging.info(f"Loading checkpoint from: {args.resume_ckpt}")
-        loc = 'cuda:{}'.format(args.local_rank) if torch.cuda.is_available() else 'cpu'
-        checkpoint = torch.load(args.resume_ckpt, map_location=loc)
+        checkpoint = torch.load(args.resume_ckpt, map_location='cpu')
         model_without_ddp.load_state_dict(checkpoint['model'], strict=args.strict_resume)
         del checkpoint
 
@@ -292,7 +291,7 @@ def main(args):
             optimizer.zero_grad()
 
             if args.guided_flag and (args.train_datasets[0] in ['kitti_completion', 'vkitti2', 'ms2']):
-                image1, image2, flow, valid, hint, conversion_rate = [x.cuda(non_blocking=True) for x in data_blob]
+                image1, image2, flow, valid, hint, conversion_rate = [x.to('cpu') for x in data_blob]
 
             flow = flow.squeeze(1)  # [b,h,w]
             mask = (flow < args.max_disp) & (valid > 0)  # [b,h,w]
@@ -420,10 +419,8 @@ def main(args):
 if __name__ == '__main__':
     seed = 1000
     torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     random.seed(seed)
-    torch.backends.cudnn.benchmark = True
+    #torch.backends.cudnn.benchmark = True
 
     main(args)
